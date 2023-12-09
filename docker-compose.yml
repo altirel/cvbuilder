@@ -1,0 +1,44 @@
+version: '3.8'
+name: 'cvbuilder'
+services:
+  mongodb:
+    image: mongo
+    restart: always
+    container_name: mongodb
+    environment:
+      - MONGO_INITDB_DATABASE=cvbuilder
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_config:/data/configdb
+      - mongo_db:/data/db
+
+  cvbuilder:
+    image: altirel/cvbuilder
+    container_name: cvbuilder
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - mongodb
+    environment:
+      - DATABASE_USERNAME=root
+      - DATABASE_PASSWORD=root
+      - DATABASE_HOST=mongodb
+      - DATABASE_PORT=27017
+      - DATABASE_NAME=cvbuilder
+    ports:
+      - '8082:8080'
+    volumes:
+      - cvbuilder:/tmp
+volumes:
+  mongo:
+    driver: local
+  cvbuilder:
+    driver: local
+  mongo_config:
+    driver: local
+  mongo_db:
+    driver: local

@@ -1,0 +1,11 @@
+server:
+  port: 8080
+
+spring:
+  data:
+    mongodb:
+      database: ${DATABASE_NAME:cvbuilder}
+      host: ${DATABASE_HOST:localhost}
+      port: ${DATABASE_PORT:27017}
+      username: ${DATABASE_USERNAME:root}
+      password: ${DATABASE_PASSWORD:root}
