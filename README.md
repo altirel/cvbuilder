@@ -1,6 +1,11 @@
 # CV Builder
-This is the project that helps employees to manage and consume **CV** and 
-**Cover Letter** templates.
+Are you looking for job and tired of building your CV and CL for every 
+single vacancy and position? CV Builder simplifies this process.  
+
+This only require a few easy steps:
+1. Upload your own CV/CL template or select one of provided;
+2. Specify values for required fields;
+3. Choose format to save (`.pdf`/`.docx`).  
 
 ## Tech stack
 - Java 17
@@ -16,8 +21,9 @@ There are three simple ways how to launch the application.
 
 
 ### 2. Docker
-- Open terminal and enter `docker compose up -d`
+- Open CLI and run `mvn clean package` to build application.
+- Open terminal and run following command `docker compose up -d`.
 
 ### 3. CLI
-- Open CLI and enter following command to clean and build application `mvn clean package`.   
-- Enter `java -jar /target/cvbuilder-0.0.1-SNAPSHOT.jar` to launch an application.
+- Open CLI and run `mvn clean package` to build application.   
+- Run `java -jar /target/cvbuilder-0.0.1-SNAPSHOT.jar` to launch an application.
