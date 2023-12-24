@@ -1,7 +1,6 @@
 FROM bellsoft/liberica-openjdk-alpine:17
-CMD mvn clean package
 VOLUME /tmp
-COPY target/cvbuilder-*-SNAPSHOT.jar app.jar
+COPY target/cvbuilder-*.jar app.jar
 EXPOSE 8080
 ENV DATABASE_USERNAME=root
 ENV DATABASE_PASSWORD=root
