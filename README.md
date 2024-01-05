@@ -10,7 +10,8 @@ This only require a few easy steps:
 ## Tech stack
 - Java 17
 - MongoDB
-- GroupDocs
+- PDFBox
+- MinIO
 
 ## How to launch
 There are three simple ways how to launch the application.
