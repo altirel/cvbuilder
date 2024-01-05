@@ -4,8 +4,16 @@ server:
 spring:
   data:
     mongodb:
+      authentication-database: admin
       database: ${DATABASE_NAME:cvbuilder}
       host: ${DATABASE_HOST:localhost}
       port: ${DATABASE_PORT:27017}
       username: ${DATABASE_USERNAME:root}
       password: ${DATABASE_PASSWORD:root}
+
+minio:
+  url: ${MINIO_URL:http://localhost:9000}
+  accesskey: ${MINIO_ACCESS:minio-root-access}
+  secretkey: ${MINIO_SECRET:minio-root-secret}
+  templates-bucket: templates
+  documents-bucket: documents
