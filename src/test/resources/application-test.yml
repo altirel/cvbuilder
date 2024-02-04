@@ -1,0 +1,6 @@
+server:
+  port: 8080
+
+minio:
+  templates-bucket: templates
+  documents-bucket: documents

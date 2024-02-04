@@ -6,8 +6,7 @@ import com.basiliqo.cvbuilder.enums.DocumentType;
 import com.basiliqo.cvbuilder.exception.FileSavingException;
 import com.basiliqo.cvbuilder.mapper.FileDataMapper;
 import com.basiliqo.cvbuilder.service.DocumentFileService;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
+import com.basiliqo.cvbuilder.service.MinioService;
 import io.minio.errors.ErrorResponseException;
 import io.minio.errors.InsufficientDataException;
 import io.minio.errors.InternalException;
@@ -18,12 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 /**
@@ -33,17 +29,12 @@ import java.util.Optional;
 @Service(DocumentFileService.NAME)
 public class DocumentFileServiceImpl implements DocumentFileService {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd-hh:mm:ss");
-
-    private final MinioClient minioClient;
-    private final MinioServiceImpl minioBucketService;
+    private final MinioService minioService;
     private final FileDataMapper fileDataMapper;
 
-    public DocumentFileServiceImpl(MinioClient minioClient,
-                                   MinioServiceImpl minioBucketService,
+    public DocumentFileServiceImpl(MinioService minioService,
                                    FileDataMapper fileDataMapper) {
-        this.minioClient = minioClient;
-        this.minioBucketService = minioBucketService;
+        this.minioService = minioService;
         this.fileDataMapper = fileDataMapper;
     }
 
@@ -52,12 +43,15 @@ public class DocumentFileServiceImpl implements DocumentFileService {
                                              DocumentType documentType,
                                              DocumentContentType documentContentType) {
         try {
-            String bucketName = minioBucketService.getBucketNameByDocumentType(documentType);
-            if (!minioBucketService.bucketExists(bucketName)) {
-                minioBucketService.createBucket(bucketName);
+            String bucketName = minioService.getBucketNameByDocumentType(documentType);
+            if (bucketName == null) {
+                throw new FileSavingException("Unable to save file. Unsupported document content type.");
+            }
+            if (!minioService.bucketExists(bucketName)) {
+                minioService.createBucket(bucketName);
             }
 
-            return Optional.ofNullable(minioClient.putObject(createFileToSave(file, documentContentType, bucketName)))
+            return Optional.ofNullable(minioService.saveFile(file, documentContentType, bucketName))
                     .map(fileDataMapper::toFileSaveResponse)
                     .orElseThrow(() -> new FileSavingException("Error occurred while saving a file in MinIO"));
         } catch (ErrorResponseException | XmlParserException | ServerException | NoSuchAlgorithmException |
@@ -66,27 +60,5 @@ public class DocumentFileServiceImpl implements DocumentFileService {
             log.error("Error occurred while saving a file in MinIO", e);
             throw new FileSavingException("Error occurred while saving a file in MinIO", e);
         }
-    }
-
-    private PutObjectArgs createFileToSave(MultipartFile file,
-                                           DocumentContentType documentContentType,
-                                           String bucketName) throws IOException {
-        if (file.getOriginalFilename() == null) {
-            throw new FileSavingException("No filename provided");
-        }
-
-        return PutObjectArgs.builder()
-                .bucket(bucketName)
-                .object(generateFilepath(documentContentType.getId(), file.getOriginalFilename()))
-                .stream(file.getInputStream(), file.getSize(), -1)
-                .build();
-    }
-
-    @Nonnull
-    private String generateFilepath(@Nonnull String documentType, @Nonnull String filename) {
-        return String.format("%s/%s_%s",
-                documentType.toLowerCase(),
-                LocalDateTime.now().format(DATE_FORMATTER),
-                filename.replace(" ", "_"));
     }
 }

@@ -26,7 +26,8 @@ public class TemplateMapperImpl implements TemplateMapper {
 
     @Override
     public TemplateMinimalResponse toMinimalResponse(Template template) {
-        return new TemplateMinimalResponse(template.getName(),
+        return new TemplateMinimalResponse(template.getId(),
+                template.getName(),
                 template.getDocumentContentType().getId(),
                 template.getCreated());
     }

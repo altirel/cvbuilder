@@ -2,8 +2,6 @@ package com.basiliqo.cvbuilder.service.impl;
 
 import com.basiliqo.cvbuilder.component.FileFormatDetector;
 import com.basiliqo.cvbuilder.component.TemplateParameterExtractor;
-import com.basiliqo.cvbuilder.component.impl.FileFormatDetectorImpl;
-import com.basiliqo.cvbuilder.component.impl.TemplateParameterExtractorImpl;
 import com.basiliqo.cvbuilder.dto.FileSaveResponse;
 import com.basiliqo.cvbuilder.dto.TemplateDetailedResponse;
 import com.basiliqo.cvbuilder.dto.TemplatePageResponse;
@@ -14,7 +12,7 @@ import com.basiliqo.cvbuilder.enums.DocumentContentType;
 import com.basiliqo.cvbuilder.enums.DocumentType;
 import com.basiliqo.cvbuilder.enums.FileFormat;
 import com.basiliqo.cvbuilder.exception.FileProcessingException;
-import com.basiliqo.cvbuilder.exception.TemplateNotFoundException;
+import com.basiliqo.cvbuilder.exception.EntityNotFoundException;
 import com.basiliqo.cvbuilder.exception.UnsupportedDocumentTypeException;
 import com.basiliqo.cvbuilder.exception.WrongNameException;
 import com.basiliqo.cvbuilder.mapper.TemplateMapper;
@@ -45,10 +43,10 @@ public class TemplateServiceImpl implements TemplateService {
     private final TemplateParameterExtractor templateParameterExtractor;
 
     public TemplateServiceImpl(TemplateMapper templateMapper,
-                               FileFormatDetectorImpl fileFormatDetector,
+                               FileFormatDetector fileFormatDetector,
                                TemplateRepository templateRepository,
                                DocumentFileService documentFileService,
-                               TemplateParameterExtractorImpl templateParameterExtractor) {
+                               TemplateParameterExtractor templateParameterExtractor) {
         this.templateMapper = templateMapper;
         this.fileFormatDetector = fileFormatDetector;
         this.templateRepository = templateRepository;
@@ -66,19 +64,16 @@ public class TemplateServiceImpl implements TemplateService {
     public TemplateDetailedResponse loadByIdAndType(String id, DocumentContentType documentContentType) {
         return templateRepository.findByIdAndDocumentContentType(id, documentContentType)
                 .map(templateMapper::toDetailedResponse)
-                .orElseThrow(() -> new TemplateNotFoundException("Template not found."));
+                .orElseThrow(() -> new EntityNotFoundException("Template not found."));
     }
 
     public String save(TemplateSaveRequest request) {
         try {
             DocumentContentType type = Optional.of(request.type())
                     .map(DocumentContentType::fromId)
-                    .orElseThrow(() -> new UnsupportedDocumentTypeException("Document type content is not supported"));
+                    .orElseThrow(() -> new UnsupportedDocumentTypeException("Document content type is not supported"));
 
             String name = request.name();
-            if (name == null) {
-                throw new WrongNameException("Name is not specified");
-            }
             if (templateRepository.existsByName(name)) {
                 throw new WrongNameException("Name is already taken");
             }
