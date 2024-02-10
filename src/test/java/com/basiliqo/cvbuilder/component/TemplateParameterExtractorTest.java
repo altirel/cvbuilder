@@ -1,6 +1,6 @@
-package com.basiliqo.cvbuilder.component.impl;
+package com.basiliqo.cvbuilder.component;
 
-import com.basiliqo.cvbuilder.component.TemplateParameterExtractor;
+import com.basiliqo.cvbuilder.component.impl.TemplateParameterExtractorImpl;
 import com.basiliqo.cvbuilder.enums.FileFormat;
 import com.basiliqo.cvbuilder.exception.UnsupportedFileFormatException;
 import com.basiliqo.cvbuilder.service.DocxService;
