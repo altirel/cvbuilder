@@ -35,6 +35,7 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - mongodb
+      - minio
     environment:
       - DATABASE_USERNAME=root
       - DATABASE_PASSWORD=root
