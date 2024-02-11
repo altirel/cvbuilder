@@ -27,11 +27,11 @@ services:
     volumes:
       - minio_storage:/mnt/data
 
-  cvbuilder:
+  backend:
     image: altirel/cvbuilder
-    container_name: cvbuilder
+    container_name: backend
     build:
-      context: ./
+      context: backend
       dockerfile: Dockerfile
     depends_on:
       - mongodb
@@ -48,9 +48,24 @@ services:
     ports:
       - '8080:8080'
     volumes:
-      - cvbuilder:/tmp
+      - backend:/app
+
+  frontend:
+    image: altirel/cvbuilder-frontend
+    container_name: frontend
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    depends_on: 
+      - backend
+    ports:
+      - 5173:5173
+    volumes:
+      - frontend:/app
 volumes:
-  cvbuilder:
+  backend:
+    driver: local
+  frontend:
     driver: local
   minio_storage:
     driver: local
