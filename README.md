@@ -1,30 +1,27 @@
 # CV Builder
-Are you looking for job and tired of building your CV and CL for every 
-single vacancy and position? CV Builder simplifies this process.  
+Are you looking for a new job and tired of building your resumes and cover letters for every 
+single vacancy and position? CV Builder simplifies this process. You're no longer need to do it manually!
 
 This only require a few easy steps:
-1. Upload your own CV/CL template or select one of provided;
-2. Specify values for required fields;
+1. Upload your resume or cover letter template or select one of provided;
+2. Specify values for required fields of template;
 3. Choose format to save (`.pdf`/`.docx`).  
 
 ## Tech stack
+### Backend
 - Java 17
 - MongoDB
 - PDFBox
 - MinIO
 
+### Frontend
+- React
+
 ## How to launch
-There are three simple ways how to launch the application.
+There are two simple ways how to launch the application.
 
-### 1. IDE
-- Specify required parameters in `application.yml` file.
-- Add new `Spring Boot configuration` and select JDK and  main file `CvbuilderApplication.java`. 
-
+### 1. Backend and frontend separately
+- Follow instructions in [`backend`](./backend/README.md) and [`frontend`](./frontend/README.md) folders.
 
 ### 2. Docker
-- Open CLI and run `mvn clean package` to build application.
-- Open terminal and run following command `docker compose up -d`.
-
-### 3. CLI
-- Open CLI and run `mvn clean package` to build application.   
-- Run `java -jar /target/cvbuilder-0.0.1-SNAPSHOT.jar` to launch an application.
+- Open terminal in a root folder of the project and run following command `docker compose up -d`.
